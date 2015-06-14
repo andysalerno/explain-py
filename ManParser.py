@@ -30,10 +30,6 @@ class ManParser:
 
     @staticmethod
     def _matches(cur_line, short_args, long_args):
-        """
-        Returns true if any char in short_args or any string in long_args is found in cur_line
-        (only for the first words of cur_line that begin with a -)
-        """
         splitline = filter(None, re.split(', |; |\s', cur_line))
         for it in splitline:
             it = it.split('=')[0]
