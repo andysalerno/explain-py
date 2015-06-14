@@ -8,6 +8,8 @@ class ManParser:
     def __init__(self, man_file):
         self.man_iter = iter(man_file.readlines())
 
+        self.mode = None
+        self.name_checked = False
         self.state = None
         self.cur_line = None
         self.cur_example = ''
@@ -21,7 +23,7 @@ class ManParser:
             print(self.cur_line.rstrip(), end='\n')
             self.state = None
 
-        elif self.state == DESCRIPTION:
+        elif self.mode == NORMAL and self.state == DESCRIPTION:
             if not self.cur_line.strip():
                 print()  # just print a newline
                 self.state = None
@@ -44,16 +46,25 @@ class ManParser:
                     return True
 
     def explain(self, short_args, long_args):
+        self.mode = NORMAL
         while self._advance():
             self._act()
-            if self.cur_line.strip().lower() == 'name':
+            if not self.name_checked and self.cur_line.strip().lower() == 'name':
                 self.state = NAME
+                self.name_checked = True
             elif self._matches(self.cur_line, short_args, long_args):
                 self.state = DESCRIPTION
                 self._act()
 
     def search(self, query):
+        self.mode = SEARCH
         while self._advance():
+            self._act()
+            if not self.name_checked and self.cur_line.strip().lower() == 'name':
+                self.state = NAME
+                self.name_checked = True
+                continue
+
             splitline = self.cur_line.split()
             if len(splitline) == 0:
                 if self.state == FOUND:

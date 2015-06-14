@@ -9,9 +9,7 @@ TMP_DIR = '/tmp/explain_tmp/'
 def get_man(command):
     man_location = TMP_DIR + command
     if not os.path.exists(man_location):
-        print("tmp file didn't exist")
         if not os.path.exists(TMP_DIR):
-            print("tmp dir didn't exist")
             os.makedirs(TMP_DIR)
         with open(man_location, 'wb+') as f:
             try:
