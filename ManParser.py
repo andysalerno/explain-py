@@ -3,8 +3,8 @@ import re
 (NAME, DESCRIPTION, FOUND) = range(3)
 (SEARCH, NORMAL) = range(2)
 
-class ManParser:
 
+class ManParser:
     def __init__(self, man_file):
         self.man_iter = iter(man_file.readlines())
 

@@ -6,6 +6,7 @@ from ManParser import *
 
 TMP_DIR = '/tmp/explain_tmp/'
 
+
 def get_man(command):
     man_location = TMP_DIR + command
     if not os.path.exists(man_location):
@@ -19,6 +20,7 @@ def get_man(command):
                 quit()
     return open(man_location, 'r')
 
+
 def get_args(all_args):
     short_args = set()
     long_args = set()
@@ -30,6 +32,7 @@ def get_args(all_args):
             short_args.update(list(it[1:]))
 
     return short_args, long_args
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2 or (sys.argv[1] == '-s' and len(sys.argv) < 4):
