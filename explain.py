@@ -8,7 +8,6 @@ TMP_DIR = '/tmp/explain_tmp/'
 
 def get_man(command):
     man_location = TMP_DIR + command
-    print("loc: " + man_location)
     if not os.path.exists(man_location):
         print("tmp file didn't exist")
         if not os.path.exists(TMP_DIR):
