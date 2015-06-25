@@ -6,6 +6,12 @@ from ManParser import *
 
 TMP_DIR = '/tmp/explain_tmp/'
 
+USAGE = '''Usage:
+        To explain what a command will do:
+        explain-py [command] [args...]
+        To search for a command whose description contains QUERY:
+        explain-py -s [command] QUERY'''
+
 
 def get_man(command):
     man_location = TMP_DIR + command
@@ -35,30 +41,22 @@ def get_args(all_args):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or (sys.argv[1] == '-s' and len(sys.argv) < 4):
-        print("Usage:\nfind by exact option (-t, -s, --author):\n\texplain [command] [args...]")
-        print("general search, including description body:\n\texplain -s [command] [search term]")
+    len_args = len(sys.argv)
+    if len_args < 2 or (sys.argv[1] == '-s' and len_args < 4):
+        print(USAGE)
         quit()
 
-    command = None
-    args = None
-    mode = None
-    query = None
-    short_args, long_args = None, None
     if sys.argv[1] == '-s':
         # search mode
         command = sys.argv[2]
         query = sys.argv[3]
-        mode = SEARCH
     else:
-        # normal mode
+        # explain mode
         command = sys.argv[1]
         args = sys.argv[2:]
-        mode = NORMAL
         short_args, long_args = get_args(args)
 
     man_file = get_man(command)
-
     man_parser = ManParser(man_file)
 
     if sys.argv[1] == '-s':

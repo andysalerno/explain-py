@@ -1,7 +1,7 @@
 import re
 
 (NAME, DESCRIPTION, FOUND) = range(3)
-(SEARCH, NORMAL) = range(2)
+(SEARCH, EXPLAIN) = range(2)
 
 
 class ManParser:
@@ -23,21 +23,19 @@ class ManParser:
             print(self.cur_line.rstrip(), end='\n')
             self.state = None
 
-        elif self.mode == NORMAL and self.state == DESCRIPTION:
+        elif self.mode == EXPLAIN and self.state == DESCRIPTION:
             if not self.cur_line.strip():
-                print()  # just print a newline
                 self.state = None
             else:
                 print(self.cur_line.rstrip(), end='\n')
 
     @staticmethod
     def _matches(cur_line, short_args, long_args):
-        splitline = filter(None, re.split(', |; |\s', cur_line))
+        splitline = filter(None, re.split(',|;|\s', cur_line))
         for it in splitline:
             it = it.split('=')[0]
             if not it.startswith('-'):
-                # we stop looking for args the moment we see a non-arg
-                return False
+                return False  # we stop looking for args the moment we see a non-arg
             elif it.startswith('--'):
                 if it[2:].lower() in long_args:
                     return True
@@ -46,7 +44,7 @@ class ManParser:
                     return True
 
     def explain(self, short_args, long_args):
-        self.mode = NORMAL
+        self.mode = EXPLAIN
         while self._advance():
             self._act()
             if not self.name_checked and self.cur_line.strip().lower() == 'name':
@@ -60,15 +58,15 @@ class ManParser:
         self.mode = SEARCH
         while self._advance():
             self._act()
-            if not self.name_checked and self.cur_line.strip().lower() == 'name':
+            splitline = self.cur_line.split()
+            if not self.name_checked and len(splitline) == 1 and splitline[0].lower() == 'name':
                 self.state = NAME
                 self.name_checked = True
                 continue
 
-            splitline = self.cur_line.split()
             if len(splitline) == 0:
                 if self.state == FOUND:
-                    print(self.cur_example.rstrip(), end='\n\n')
+                    print(self.cur_example.rstrip(), end='\n')
                 self.cur_example = ''
                 self.state = None
             elif splitline[0].startswith('-') and self.state != FOUND:
