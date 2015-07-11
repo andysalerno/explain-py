@@ -75,5 +75,5 @@ class ManParser:
             if self.state == DESCRIPTION or self.state == FOUND:
                 self.cur_example += self.cur_line
 
-            if self.state == DESCRIPTION and query.lower() in self.cur_line.lower():
+            if self.state == DESCRIPTION and [x for x in query if x.lower() in self.cur_line.lower()]:
                 self.state = FOUND

@@ -2,6 +2,7 @@
 import os
 import sys
 import subprocess
+
 from ManParser import *
 
 TMP_DIR = '/tmp/explain_tmp/'
@@ -10,7 +11,7 @@ USAGE = '''Usage:
         To explain what a command will do:
         explain-py [command] [args...]
         To search for a command whose description contains QUERY:
-        explain-py -s [command] QUERY'''
+        explain-py -s [command] [search terms...]'''
 
 
 def get_man(command):
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     if sys.argv[1] == '-s':
         # search mode
         command = sys.argv[2]
-        query = sys.argv[3]
+        query = sys.argv[3:]
     else:
         # explain mode
         command = sys.argv[1]
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     man_parser = ManParser(man_file)
 
     if sys.argv[1] == '-s':
-        man_parser.search(sys.argv[3])
+        man_parser.search(query)
     else:
         man_parser.explain(short_args, long_args)
 
