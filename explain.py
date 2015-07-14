@@ -2,6 +2,7 @@
 import os
 import sys
 import subprocess
+import argparse
 
 from ManParser import *
 
@@ -41,28 +42,33 @@ def get_args(all_args):
     return short_args, long_args
 
 
-if __name__ == "__main__":
-    len_args = len(sys.argv)
-    if len_args < 2 or (sys.argv[1] == '-s' and len_args < 4):
-        print(USAGE)
-        quit()
+def parse_arguments():
+    raw_args = sys.argv
+    parser = argparse.ArgumentParser(description="Print out relevant chunks of a command's man page for easy browsing.")
+    parser.add_argument("-s", help="search bodies instead of titles", action="store_true")
+    parser.add_argument("command", help="the command, for example: ls, tar, cp, ssh")
+    parser.add_argument("command-args", nargs='?', help="the arguments that you would like to lookup")
 
-    if sys.argv[1] == '-s':
-        # search mode
-        command = sys.argv[2]
-        query = sys.argv[3:]
+    args = parser.parse_known_args()[0]
+
+    mode = SEARCH if raw_args[1] == '-s' else EXPLAIN
+    if mode == SEARCH:
+        command_args = sys.argv[3:]
     else:
-        # explain mode
-        command = sys.argv[1]
-        args = sys.argv[2:]
-        short_args, long_args = get_args(args)
+        command_args = sys.argv[2:]
+    return args.command, command_args, mode
+
+
+if __name__ == "__main__":
+    command, args, mode = parse_arguments()
 
     man_file = get_man(command)
     man_parser = ManParser(man_file)
 
-    if sys.argv[1] == '-s':
-        man_parser.search(query)
+    if mode == SEARCH:
+        man_parser.search(args)
     else:
+        short_args, long_args = get_args(args)
         man_parser.explain(short_args, long_args)
 
     man_file.close()
