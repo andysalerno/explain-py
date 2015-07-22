@@ -50,7 +50,6 @@ def parse_arguments():
     parser.add_argument("command-args", nargs='?', help="the arguments that you would like to lookup")
 
     args = parser.parse_known_args()[0]
-
     mode = SEARCH if raw_args[1] == '-s' else EXPLAIN
     if mode == SEARCH:
         command_args = sys.argv[3:]
@@ -59,7 +58,7 @@ def parse_arguments():
     return args.command, command_args, mode
 
 
-if __name__ == "__main__":
+def main():
     command, args, mode = parse_arguments()
 
     man_file = get_man(command)
@@ -72,3 +71,7 @@ if __name__ == "__main__":
         man_parser.explain(short_args, long_args)
 
     man_file.close()
+
+
+if __name__ == "__main__":
+    main()
